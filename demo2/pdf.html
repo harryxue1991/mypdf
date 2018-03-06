@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./viewer.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="viewer" style="width: 1000px"></div>
+</body>
+
+</html>
+<script src="./pdf.js"></script>
+<script src="./viewer.js"></script>
+<script type="text/javascript">
+        var _pdf;
+        var url = './abc.pdf';
+        PDFJS.workerSrc = './pdf.worker.js';
+        PDFJS.getDocument(url).then(function (pdf) {
+            _pdf = pdf;
+            console.log(pdf.numPages); //pdf总页数
+        }).then(function () {
+            showPdfPage(3);
+        });
+        function showPdfPage(pageNum) {
+            var container = document.getElementById("viewer")
+            _pdf.getPage(pageNum).then(function (page) {
+                var scale = 1;
+                var viewport = page.getViewport(scale);
+                scale = container.clientWidth / viewport.width;
+                var pageView = new PDFPageView({
+                    container: container,
+                    id: page.pageNumber,
+                    scale: scale,
+                    defaultViewport: viewport,
+                    textLayerFactory: new DefaultTextLayerFactory(),
+                    annotationLayerFactory: new DefaultAnnotationLayerFactory(),
+                });
+                pageView.setPdfPage(page);
+                pageView.draw();
+            });
+        }
+</script>

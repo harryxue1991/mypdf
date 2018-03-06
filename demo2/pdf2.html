@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./viewer.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="viewer" style="width: 1000px"></div>
+</body>
+
+</html>
+<script src="./pdf.js"></script>
+<script src="./viewer.js"></script>
+<script type="text/javascript">
+        var url = './abc.pdf';
+        var container = document.getElementById("viewer");
+        PDFJS.workerSrc = './pdf.worker.js';
+        PDFJS.getDocument(url).then(function (pdf) {
+                for(var i = 1; i < pdf.numPages; i++) {
+                        pdf.getPage(i).then(function (page) {
+                                var scale = 1;
+                                var viewport = page.getViewport(scale);
+                                scale = container.clientWidth / viewport.width;
+                                var pageView = new PDFPageView({
+                                container: container,
+                                id: page.pageNumber,
+                                scale: scale,
+                                defaultViewport: viewport,
+                                textLayerFactory: new DefaultTextLayerFactory(),
+                                annotationLayerFactory: new DefaultAnnotationLayerFactory(),
+                                });
+                                pageView.setPdfPage(page);
+                                pageView.draw();
+                        });
+                }
+        })        
+</script>
